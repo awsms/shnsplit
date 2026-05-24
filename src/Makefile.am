@@ -18,7 +18,7 @@ shntool_LDADD = $(MODULE_OBJS)
 shntool_DEPENDENCIES = $(MODULE_OBJS)
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
-AM_CFLAGS = -I$(top_srcdir)/include
+AM_CFLAGS = -std=gnu99 -I$(top_srcdir)/include
 
 install-exec-hook:
 	for mode_alias in $(MODE_ALIASES_ALL) ; do \
