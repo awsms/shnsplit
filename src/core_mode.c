@@ -358,9 +358,17 @@ static wlong is_m_ss_ff(unsigned char *buf,wave_info *info)
   if (frames >= 75)
     st_error("invalid value for frames: [%d]",frames);
 
-  bytes = (((wlong)min) * CD_RATE * 60) +
-          (((wlong)sec) * CD_RATE) +
-          (((wlong)frames) * CD_BLOCK_SIZE);
+  if (PROB_NOT_CD(info)) {
+    bytes = (((wlong)min) * info->rate * 60) +
+            (((wlong)sec) * info->rate) +
+            (wlong)((((double)frames * (double)info->rate) /
+                     (double)CD_BLOCKS_PER_SEC) + 0.5);
+  }
+  else {
+    bytes = (((wlong)min) * CD_RATE * 60) +
+            (((wlong)sec) * CD_RATE) +
+            (((wlong)frames) * CD_BLOCK_SIZE);
+  }
 
   return bytes;
 }
