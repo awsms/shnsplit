@@ -1,0 +1,30 @@
+# Build products
+*.o
+*.lo
+*.la
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Autotools build output
+Makefile
+/config.cache
+/config.log
+/config.status
+/config.status.lineno
+/autom4te.cache/
+.deps/
+.libs/
+
+# Generated project files
+/src/shntool
+/src/glue_formats.c
+/src/glue_modes.c
+
+# Local editor and OS files
+*~
+*.swp
+*.swo
+.DS_Store
