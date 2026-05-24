@@ -17,6 +17,8 @@ Makefile
 /autom4te.cache/
 .deps/
 .libs/
+*.tar.zst
+pkg/
 
 # Generated project files
 /src/shntool
