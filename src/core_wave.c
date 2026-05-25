@@ -97,7 +97,9 @@ bool verify_wav_header_internal(wave_info *info,bool verbose)
 {
   unsigned long le_long=0,bytes;
   unsigned char buf[2];
+  unsigned char extensible[24];
   unsigned char tag[4];
+  wshort subformat;
   int header_len = 0;
 
   /* look for "RIFF" in header */
@@ -204,6 +206,29 @@ bool verify_wav_header_internal(wave_info *info,bool verbose)
   header_len += 16;
 
   le_long -= 16;
+
+  if (info->wave_format == WAVE_FORMAT_EXTENSIBLE) {
+    if (le_long < 24) {
+      st_warning("WAVE extensible fmt chunk was too short while processing file: [%s]",info->filename);
+      return FALSE;
+    }
+    if (fread(extensible,1,24,info->input) != 24) {
+      st_warning("reached end of file reading WAVE extensible fmt data while processing file: [%s]",info->filename);
+      return FALSE;
+    }
+
+    subformat = uchar_to_ushort_le(extensible+8);
+    if (subformat != WAVE_FORMAT_PCM ||
+        memcmp(extensible+10,"\x00\x00\x00\x00\x10\x00\x80\x00\x00\xaa\x00\x38\x9b\x71",14)) {
+      st_warning("unsupported WAVE extensible subformat 0x%04x (%s) while processing file: [%s]",
+            subformat,format_to_str(subformat),info->filename);
+      return FALSE;
+    }
+
+    info->wave_format = WAVE_FORMAT_PCM;
+    header_len += 24;
+    le_long -= 24;
+  }
 
   if (le_long) {
     bytes = le_long;
